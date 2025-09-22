@@ -11,3 +11,6 @@ wheels/
 
 # Environment variables
 .env
+
+# Disassembly folders
+src/terminal_dex_scraper/gen_1/red_and_blue/disassembly/
