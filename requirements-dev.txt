@@ -3,6 +3,13 @@
 basedpyright==1.31.4 \
     --hash=sha256:055e4a38024bd653be12d6216c1cfdbee49a1096d342b4d5f5b4560f7714b6fc \
     --hash=sha256:2450deb16530f7c88c1a7da04530a079f9b0b18ae1c71cb6f812825b3b82d0b1
+click==8.3.0 \
+    --hash=sha256:9b9f285302c6e3064f4330c05f05b81945b2a39544279343e6e7c5f27a9baddc \
+    --hash=sha256:e7b8232224eba16f4ebe410c25ced9f7875cb5f3263ffc93cc3e8da705e229c4
+colorama==0.4.6 ; sys_platform == 'win32' \
+    --hash=sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44 \
+    --hash=sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6
+    # via click
 nodejs-wheel-binaries==22.19.0 \
     --hash=sha256:1392896f1a05a88a8a89b26e182d90fdf3020b4598a047807b91b65731e24c00 \
     --hash=sha256:3f271f5abfc71b052a6b074225eca8c1223a0f7216863439b86feaca814f6e5a \
