@@ -35,3 +35,12 @@ This is the data this module scrapes:
 - Artwork / Gallery:
     - Ken Sugimori's official artwork for Red and Blue.
 """
+
+from terminal_dex_scraper.config.constants import POKEMON_RED_AND_BLUE_DISASSEMBLY_PATH
+from terminal_dex_scraper.config.settings import Settings
+from terminal_dex_scraper.utils.repos import clone_repository
+
+pokemon_red_and_blue_disassembly = clone_repository(
+    Settings().pokemon_red_and_blue_disassembly_repo,
+    POKEMON_RED_AND_BLUE_DISASSEMBLY_PATH.as_posix(),
+)
