@@ -1,9 +1,11 @@
 """Utility functions for external repositories management."""
 
+from pathlib import Path
+
 from git import Repo
 
 
-def clone_repository(repository_url: str, target_path: str) -> Repo:
+def clone_repository(repository_url: str, target_path: Path) -> Repo:
     """Clone a Git repository to a target path.
 
     Args:
