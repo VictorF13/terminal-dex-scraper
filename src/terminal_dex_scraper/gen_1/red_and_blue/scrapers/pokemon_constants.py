@@ -1,4 +1,4 @@
-"""Module to scrape the constant for a given Pokémon in Red and Blue."""
+"""Module to scrape the constant for all Pokémon in Red and Blue."""
 
 from terminal_dex_scraper.config.settings import Settings
 
