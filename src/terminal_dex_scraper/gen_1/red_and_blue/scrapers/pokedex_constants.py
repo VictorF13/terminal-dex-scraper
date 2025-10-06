@@ -28,6 +28,8 @@ class PokedexConstants:
         """
         if settings is None:
             self._settings: Settings = Settings()
+        else:
+            self._settings = settings
 
         self._pokedex_constants_path: Path = (
             self._settings.pokemon_red_and_blue_disassembly_path
