@@ -1,6 +1,11 @@
 """Module to scrape the constant for all Pokémon in Red and Blue."""
 
+from typing import TYPE_CHECKING
+
 from terminal_dex_scraper.config.settings import Settings
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class PokemonConstants:
@@ -29,6 +34,12 @@ class PokemonConstants:
         if settings is None:
             self._settings: Settings = Settings()
 
+        self._pokemon_constants_path: Path = (
+            self._settings.pokemon_red_and_blue_disassembly_path
+            / "constants"
+            / "pokemon_constants.asm"
+        )
+
         self.constants: list[str | None] = self._scrape_pokemon_constants()
         self.aliases: dict[str, str] = self._scrape_pokemon_constants_aliases()
         self.max_pokemon_index: int = len(self.constants) - 1
@@ -48,14 +59,8 @@ class PokemonConstants:
                 None represents something with an index but no constant name.
 
         """
-        pokemon_constants_path = (
-            self._settings.pokemon_red_and_blue_disassembly_path
-            / "constants"
-            / "pokemon_constants.asm"
-        )
-
         pokemon_constants: list[str | None] = []
-        for text_line in pokemon_constants_path.read_text().splitlines():
+        for text_line in self._pokemon_constants_path.read_text().splitlines():
             line = text_line.strip()
             if line.startswith("const "):
                 parts = line.split()
@@ -79,16 +84,10 @@ class PokemonConstants:
                 be referenced to the respective Pokémon constant.
 
         """
-        pokemon_constants_path = (
-            self._settings.pokemon_red_and_blue_disassembly_path
-            / "constants"
-            / "pokemon_constants.asm"
-        )
-
         cnt_parts_aliases = 4
 
         pokemon_constants_aliases: dict[str, str] = {}
-        for text_line in pokemon_constants_path.read_text().splitlines():
+        for text_line in self._pokemon_constants_path.read_text().splitlines():
             line = text_line.strip()
             parts = line.split()
             if len(parts) == cnt_parts_aliases and parts[0] == "DEF":
