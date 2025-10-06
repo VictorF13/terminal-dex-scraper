@@ -57,3 +57,12 @@ class PokedexConstants:
                 parts = line.split()
                 pokedex_constants.append(parts[1])
         return pokedex_constants
+
+    def get_pokedex_index(self, pokedex_constant: str) -> int:
+        """Get the index of a Pokédex constant.
+
+        Returns:
+            int: The index of the Pokédex constant.
+
+        """
+        return self.constants.index(pokedex_constant)
