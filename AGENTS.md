@@ -34,10 +34,9 @@ Run all checks (ruff + basedpyright) through `prek`:
 ```sh
 prek run --all-files
 ```
-Or target specific paths:
+Or target a specific file:
 ```sh
-prek run src/
-prek run file.py
+prek run --files path/to/file.py
 ```
 
 ## Docstring rules
