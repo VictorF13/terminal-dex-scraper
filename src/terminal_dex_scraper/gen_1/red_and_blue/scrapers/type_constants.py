@@ -67,3 +67,12 @@ class TypeConstants:
             type_constants,
             type_constants_markers,
         )
+
+    def get_type_index(self, type_constant: str) -> int:
+        """Get the index of a type constant.
+
+        Returns:
+            int: The index of the type constant.
+
+        """
+        return self.constants.index(type_constant)
