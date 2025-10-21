@@ -3,6 +3,8 @@
 from pathlib import Path
 from typing import TypedDict
 
+from PIL import Image
+
 from terminal_dex_scraper.config.settings import Settings
 from terminal_dex_scraper.gen_1.red_and_blue.scrapers.growth_rate_constants import (
     GrowthRateConstants,
@@ -36,6 +38,7 @@ class PokemonBaseStatsRecord(TypedDict):
     types: list[int]
     catch_rate: int
     base_experience_yield: int
+    sprite_dimensions: dict[str, int]
     level_1_moveset: list[int]
     growth_rate: int
     machine_learnset: list[int]
@@ -150,8 +153,17 @@ class PokemonBaseStats:
         base_experience_yield = int(base_experience_yield_line.split()[1])
 
         # Popping the sprite dimensions and pointers
-        _ = data_lines.pop(0)
-        _ = data_lines.pop(0)
+        sprite_path_line = data_lines.pop(0)
+        sprite_path = (
+            self._settings.pokemon_red_and_blue_disassembly_path
+            / sprite_path_line.split()[1].replace('"', "")
+        ).with_suffix(".png")
+        with Image.open(sprite_path) as image:
+            width, height = image.size
+            sprite_dimensions = {
+                "width": width,
+                "height": height,
+            }
 
         # Get Level 1 Moveset
         level_1_moveset_line = data_lines.pop(0)
@@ -188,6 +200,7 @@ class PokemonBaseStats:
             "types": types,
             "catch_rate": catch_rate,
             "base_experience_yield": base_experience_yield,
+            "sprite_dimensions": sprite_dimensions,
             "level_1_moveset": level_1_moveset,
             "growth_rate": growth_rate,
             "machine_learnset": machine_learnset,
