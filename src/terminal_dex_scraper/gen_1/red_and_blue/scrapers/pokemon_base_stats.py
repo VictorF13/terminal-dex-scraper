@@ -38,7 +38,7 @@ class PokemonBaseStatsRecord(TypedDict):
     base_experience_yield: int
     level_1_moveset: list[int]
     growth_rate: int
-    remaining_data: list[str]
+    machine_learnset: list[int]
 
 
 class PokemonBaseStats:
@@ -70,6 +70,10 @@ class PokemonBaseStats:
         )
 
         self.base_stats_files_paths: list[Path] = self._get_list_of_base_stats_files()
+        self.base_stats_records: list[PokemonBaseStatsRecord] = [
+            self._get_pokemon_base_stats(file_path)
+            for file_path in self.base_stats_files_paths
+        ]
 
     def _get_list_of_base_stats_files(self) -> list[Path]:
         """Get the list of base stats files.
@@ -162,6 +166,21 @@ class PokemonBaseStats:
             growth_rate_line.split()[1]
         )
 
+        # Get Machine Learnset
+        machine_learnset: list[int] = []
+        machine_learnset_lines = ",".join(
+            [
+                line.replace("tmhm", "").replace("\\", "").strip()
+                for line in data_lines
+                if line.strip() not in ["db 0", "UNUSED", "db %11111111"]
+            ]
+        ).split(",")
+        machine_learnset = [
+            self._move_constants.get_move_index(item.strip())
+            for item in machine_learnset_lines
+            if item.strip() != ""
+        ]
+
         # Returning everything
         return {
             "pokedex_index": pokedex_index,
@@ -171,5 +190,5 @@ class PokemonBaseStats:
             "base_experience_yield": base_experience_yield,
             "level_1_moveset": level_1_moveset,
             "growth_rate": growth_rate,
-            "remaining_data": data_lines,
+            "machine_learnset": machine_learnset,
         }
