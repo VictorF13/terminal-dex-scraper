@@ -1,7 +1,6 @@
 """Module to scrape the base stats table for all Pokémon in Red and Blue."""
 
 from pathlib import Path
-from typing import TypedDict
 
 from PIL import Image
 
@@ -20,29 +19,100 @@ from terminal_dex_scraper.gen_1.red_and_blue.scrapers.type_constants import (
 )
 
 
-class BaseStats(TypedDict):
+class SpriteDimensions:
+    """Dimensions of a Pokémon sprite."""
+
+    def __init__(self, width: int, height: int) -> None:
+        """Initialize the SpriteDimensions object.
+
+        Args:
+            width (int): The width of the sprite in pixels.
+            height (int): The height of the sprite in pixels.
+
+        """
+        self.width: int = width
+        self.height: int = height
+
+
+class PicturePaths:
+    """Paths to the front and back pictures of a Pokémon."""
+
+    def __init__(self, front: Path, back: Path) -> None:
+        """Initialize the PicturePaths object.
+
+        Args:
+            front (Path): The path to the front picture.
+            back (Path): The path to the back picture.
+
+        """
+        self.front: Path = front
+        self.back: Path = back
+
+
+class BaseStats:
     """Base stats for a single Pokémon."""
 
-    hp: int
-    attack: int
-    defense: int
-    speed: int
-    special: int
+    def __init__(
+        self, hp: int, attack: int, defense: int, speed: int, special: int
+    ) -> None:
+        """Initialize the BaseStats object.
+
+        Args:
+            hp (int): The HP stat.
+            attack (int): The Attack stat.
+            defense (int): The Defense stat.
+            speed (int): The Speed stat.
+            special (int): The Special stat.
+
+        """
+        self.hp: int = hp
+        self.attack: int = attack
+        self.defense: int = defense
+        self.speed: int = speed
+        self.special: int = special
 
 
-class PokemonBaseStatsRecord(TypedDict):
+class PokemonBaseStatsRecord:
     """Record containing parsed base stats for a Pokémon."""
 
-    pokedex_index: int
-    base_stats: BaseStats
-    types: list[int]
-    catch_rate: int
-    base_experience_yield: int
-    sprite_dimensions: dict[str, int]
-    picture_paths: dict[str, Path]
-    level_1_moveset: list[int]
-    growth_rate: int
-    machine_learnset: list[int]
+    def __init__(
+        self,
+        pokedex_index: int,
+        base_stats: BaseStats,
+        types: list[int],
+        catch_rate: int,
+        base_experience_yield: int,
+        sprite_dimensions: SpriteDimensions,
+        picture_paths: PicturePaths,
+        level_1_moveset: list[int],
+        growth_rate: int,
+        machine_learnset: list[int],
+    ) -> None:
+        """Initialize the PokemonBaseStatsRecord object.
+
+        Args:
+            pokedex_index (int): The Pokédex index of the Pokémon.
+            base_stats (BaseStats): The base stats of the Pokémon.
+            types (list[int]): The type indices of the Pokémon.
+            catch_rate (int): The catch rate of the Pokémon.
+            base_experience_yield (int): The base experience yield.
+            sprite_dimensions (SpriteDimensions): The sprite dimensions.
+            picture_paths (PicturePaths): The paths to the pictures.
+            level_1_moveset (list[int]): The level 1 moveset indices.
+            growth_rate (int): The growth rate index.
+            machine_learnset (list[int]): The machine learnset moves indices.
+
+        """
+        self.pokedex_index: int = pokedex_index
+        self.base_stats: BaseStats = base_stats
+        self.types: list[int] = types
+        self.catch_rate: int = catch_rate
+        self.base_experience_yield: int = base_experience_yield
+        self.sprite_dimensions: SpriteDimensions = sprite_dimensions
+        self.picture_paths: PicturePaths = picture_paths
+        self.level_1_moveset: list[int] = level_1_moveset
+        self.growth_rate: int = growth_rate
+        self.machine_learnset: list[int] = machine_learnset
 
 
 class PokemonBaseStats:
@@ -130,13 +200,13 @@ class PokemonBaseStats:
             int(item.strip())
             for item in base_stats_line.split("db")[1].strip().split(",")
         ]
-        stats: BaseStats = {
-            "hp": base_stats_data[0],
-            "attack": base_stats_data[1],
-            "defense": base_stats_data[2],
-            "speed": base_stats_data[3],
-            "special": base_stats_data[4],
-        }
+        stats = BaseStats(
+            hp=base_stats_data[0],
+            attack=base_stats_data[1],
+            defense=base_stats_data[2],
+            speed=base_stats_data[3],
+            special=base_stats_data[4],
+        )
 
         # Get the Types
         types_line = data_lines.pop(0)
@@ -161,20 +231,14 @@ class PokemonBaseStats:
         ).with_suffix(".png")
         with Image.open(sprite_path) as image:
             width, height = image.size
-            sprite_dimensions = {
-                "width": width,
-                "height": height,
-            }
+            sprite_dimensions = SpriteDimensions(width=width, height=height)
 
         back_picture_path = sprite_path.with_stem(sprite_path.stem + "b")
         parts = list(back_picture_path.parts)
         parts[-2] = "back"
         back_picture_path = Path(*parts)
 
-        picture_paths = {
-            "front": sprite_path,
-            "back": back_picture_path,
-        }
+        picture_paths = PicturePaths(front=sprite_path, back=back_picture_path)
 
         _ = data_lines.pop(0)
 
@@ -207,15 +271,15 @@ class PokemonBaseStats:
         ]
 
         # Returning everything
-        return {
-            "pokedex_index": pokedex_index,
-            "base_stats": stats,
-            "types": types,
-            "catch_rate": catch_rate,
-            "base_experience_yield": base_experience_yield,
-            "sprite_dimensions": sprite_dimensions,
-            "picture_paths": picture_paths,
-            "level_1_moveset": level_1_moveset,
-            "growth_rate": growth_rate,
-            "machine_learnset": machine_learnset,
-        }
+        return PokemonBaseStatsRecord(
+            pokedex_index=pokedex_index,
+            base_stats=stats,
+            types=types,
+            catch_rate=catch_rate,
+            base_experience_yield=base_experience_yield,
+            sprite_dimensions=sprite_dimensions,
+            picture_paths=picture_paths,
+            level_1_moveset=level_1_moveset,
+            growth_rate=growth_rate,
+            machine_learnset=machine_learnset,
+        )
