@@ -39,6 +39,7 @@ class PokemonBaseStatsRecord(TypedDict):
     catch_rate: int
     base_experience_yield: int
     sprite_dimensions: dict[str, int]
+    picture_paths: dict[str, Path]
     level_1_moveset: list[int]
     growth_rate: int
     machine_learnset: list[int]
@@ -165,6 +166,18 @@ class PokemonBaseStats:
                 "height": height,
             }
 
+        back_picture_path = sprite_path.with_stem(sprite_path.stem + "b")
+        parts = list(back_picture_path.parts)
+        parts[-2] = "back"
+        back_picture_path = Path(*parts)
+
+        picture_paths = {
+            "front": sprite_path,
+            "back": back_picture_path,
+        }
+
+        _ = data_lines.pop(0)
+
         # Get Level 1 Moveset
         level_1_moveset_line = data_lines.pop(0)
         level_1_moveset: list[int] = [
@@ -201,6 +214,7 @@ class PokemonBaseStats:
             "catch_rate": catch_rate,
             "base_experience_yield": base_experience_yield,
             "sprite_dimensions": sprite_dimensions,
+            "picture_paths": picture_paths,
             "level_1_moveset": level_1_moveset,
             "growth_rate": growth_rate,
             "machine_learnset": machine_learnset,
