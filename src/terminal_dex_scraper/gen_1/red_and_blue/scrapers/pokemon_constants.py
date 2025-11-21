@@ -95,3 +95,18 @@ class PokemonConstants:
             if len(parts) == cnt_parts_aliases and parts[0] == "DEF":
                 pokemon_constants_aliases.update({parts[1]: parts[3]})
         return pokemon_constants_aliases
+
+    def get_pokemon_index(self, pokemon_constant: str) -> int:
+        """Get the index of a Pokémon constant.
+
+        Args:
+            pokemon_constant (str): The Pokémon constant name or alias to get the index
+                for.
+
+        Returns:
+            int: The index of the Pokémon constant.
+
+        """
+        # Resolve alias if the input is an alias
+        constant = self.aliases.get(pokemon_constant, pokemon_constant)
+        return self.constants.index(constant)
