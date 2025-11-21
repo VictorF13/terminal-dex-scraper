@@ -315,3 +315,18 @@ class ItemConstants:
         lines = self._item_constants_path.read_text().splitlines()
         parser = _ItemConstantsParser(lines)
         return parser.parse()
+
+    def get_item_index(self, item_constant: str) -> int:
+        """Get the index of an item constant.
+
+        Args:
+            item_constant (str): The item constant name or alias to get the index
+                for.
+
+        Returns:
+            int: The index of the item constant.
+
+        """
+        # Resolve alias if the input is an alias
+        constant = self.aliases.get(item_constant, item_constant)
+        return self.constants.index(constant)
