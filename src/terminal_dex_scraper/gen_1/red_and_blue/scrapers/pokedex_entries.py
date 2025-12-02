@@ -185,5 +185,7 @@ class PokedexEntries:
                 entries.append(entry_data[pointer])
             else:
                 # MissingNoDexEntry or other missing entries
-                entries.append(entry_data.get("MissingNoDexEntry"))
+                missing_entry = entry_data.get("MissingNoDexEntry")
+                if missing_entry is not None:
+                    entries.append(missing_entry)
         return entries
