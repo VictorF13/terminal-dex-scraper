@@ -5,6 +5,12 @@ repos:
     - id: ruff-check
       args: [ --fix ]
     - id: ruff-format
+- repo: https://github.com/facebook/pyrefly-pre-commit
+  rev: 0.44.1
+  hooks:
+    - id: pyrefly-check
+      pass_filenames: false
+      language: system
 - repo: https://github.com/astral-sh/uv-pre-commit
   rev: 0.8.19
   hooks:
