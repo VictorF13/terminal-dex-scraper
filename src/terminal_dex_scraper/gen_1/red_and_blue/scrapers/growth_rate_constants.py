@@ -49,7 +49,9 @@ class GrowthRateConstants:
             line = text_line.strip()
             if line.startswith("const GROWTH_"):
                 parts = line.split()
-                growth_rate_constants.append(parts[1])
+                growth_rate_constants.append(  # pyrefly: ignore[missing-attribute]
+                    parts[1]
+                )
             elif line.startswith("DEF NUM_GROWTH_RATES"):
                 max_growth_rate_index = len(growth_rate_constants)
         return growth_rate_constants, max_growth_rate_index

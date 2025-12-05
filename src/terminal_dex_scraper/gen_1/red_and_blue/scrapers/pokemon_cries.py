@@ -44,7 +44,7 @@ class PokemonCries:
 
         self.cries: list[PokemonCryData | None] = [None, *self._get_pokemon_cries()]
 
-    def _get_pokemon_cries(self) -> list[str]:
+    def _get_pokemon_cries(self) -> list[PokemonCryData]:
         """Get the cries for all Pokémon in Red and Blue."""
         with self._pokemon_cries_path.open() as file:
             data = file.read().splitlines()

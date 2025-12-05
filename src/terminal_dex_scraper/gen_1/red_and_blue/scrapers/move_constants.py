@@ -32,21 +32,21 @@ class MoveConstants:
 
         move_constants = self._scrape_move_constants()
 
-        self.constants: list[str | None] = move_constants[0]
+        self.constants: list[str] = move_constants[0]
         self.max_move_index: int | None = move_constants[1]
         self.cannot_move_index: int | None = move_constants[2]
         self.max_animation_index: int | None = move_constants[3]
 
     def _scrape_move_constants(
         self,
-    ) -> tuple[list[str | None], int | None, int | None, int | None]:
+    ) -> tuple[list[str], int | None, int | None, int | None]:
         """Scrape the move constants for all moves in Red and Blue.
 
         Returns:
             list[str | None]: A list of move constants for all moves in Red and Blue.
 
         """
-        move_constants: list[str | None] = []
+        move_constants: list[str] = []
         max_move_index: int | None = None
         cannot_move_index: int | None = None
         max_animation_index: int | None = None
@@ -54,7 +54,7 @@ class MoveConstants:
             line = text_line.split(";")[0].strip()
             if line.startswith("const "):
                 parts = line.split()
-                move_constants.append(parts[1])
+                move_constants.append(parts[1])  # pyrefly: ignore[missing-attribute]
             elif line.startswith("DEF NUM_ATTACKS"):
                 max_move_index = len(move_constants) - 1
             elif line.strip().startswith("DEF CANNOT_MOVE"):
