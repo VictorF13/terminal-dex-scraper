@@ -25,14 +25,16 @@ build-backend = "hatchling.build"
 lint.extend-select = ["ALL"]
 lint.ignore = ["PLR0913", "D203", "D213", "COM812"]
 
-[tool.pyrefly]
-project-includes = ["src"]
-python-interpreter-path = ".venv/bin/python"
+[tool.ty]
+src.include = ["src", "tests"]
+rules.division-by-zero = "warn"
+rules.possibly-unresolved-reference = "warn"
+rules.unused-ignore-comment = "warn"
 
 [dependency-groups]
 dev = [
     "click>=8.3.0",
     "prek>=0.2.13",
-    "pyrefly>=0.44.1",
     "ruff>=0.14.4",
+    "ty>=0.0.3",
 ]
