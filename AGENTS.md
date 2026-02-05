@@ -5,15 +5,17 @@ This project uses:
 - **uv** for all dependency management and running scripts  
 - **prek** for pre-commit checks and running all code quality tools  
 - **ruff** for linting and formatting  
-- **basedpyright** for type checking  
+- **ty** for type checking  
 
 Configuration lives in:
-- `pyproject.toml` (ruff + pyright rules)  
-- `.pre-commit-config.yaml` (prek hooks for ruff, basedpyright, and updating requirements and uv.lock)  
+
+- `pyproject.toml` (ruff + ty rules)  
+- `.pre-commit-config.yaml` (prek hooks for ruff, ty, and updating requirements and uv.lock)  
 
 There are no tests.
 
 ## Dev environment tips
+
 ```sh
 uv sync
 prek install
@@ -22,7 +24,9 @@ prek install
 - Always use `uv run path/to/script.py` instead of `python`.
 
 ## Dependency instructions
+
 Use only `uv` for dependencies:
+
 - Add runtime: `uv add PACKAGE`
 - Remove runtime: `uv remove PACKAGE`
 - Add dev: `uv add --dev PACKAGE`
@@ -30,16 +34,21 @@ Use only `uv` for dependencies:
 - Sync lockfile/env: `uv sync`
 
 ## Code quality checks
-Run all checks (ruff + basedpyright) through `prek`:
+
+Run all checks (ruff + ty) through `prek`:
+
 ```sh
 prek run --all-files
 ```
+
 Or target a specific file:
+
 ```sh
 prek run --files path/to/file.py
 ```
 
 ## Docstring rules
+
 All non-private functions should have a docstring in this format:
 
 ```py
@@ -65,12 +74,15 @@ Raises:
 ```
 
 Notes:
+
 - Include **Args** only if the function has arguments.  
 - Include **Returns** only if it returns something other than `None`.  
 - Include **Raises** only if the function explicitly raises the error.  
 
 ## Commit instructions
+
 Use Conventional Commits without parentheses:
+
 - `feat: add feature`
 - `fix: correct bug`
 - `chore: update deps`
@@ -80,6 +92,7 @@ Use Conventional Commits without parentheses:
 - `style: apply formatting`
 
 ## Guardrails
-- Do not call `pip`, `python`, `ruff`, or `basedpyright` directly. Always go through `uv` and `prek`.
+
+- Do not call `pip`, `python`, `ruff`, or `ty` directly. Always go through `uv` and `prek`.
 - Keep diffs minimal and consistent with existing style.
 - If in doubt, run `prek run --all-files` to validate.
