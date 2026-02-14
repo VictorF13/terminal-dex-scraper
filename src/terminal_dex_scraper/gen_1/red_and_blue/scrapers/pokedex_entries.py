@@ -18,6 +18,7 @@ class PokedexEntryData:
         height_feet (int): The height in feet.
         height_inches (int): The height in inches.
         weight (int): The weight in tenths of a pound.
+        dex_text_id (str): The `text_far` symbol for the Pokédex entry text.
 
     """
 
@@ -25,6 +26,7 @@ class PokedexEntryData:
     height_feet: int
     height_inches: int
     weight: int
+    dex_text_id: str
 
 
 class PokedexEntries:
@@ -159,12 +161,39 @@ class PokedexEntries:
         # Parse weight
         weight = int(weight_line[3:].split(";")[0].strip())
 
+        # Parse text pointer symbol from the first text_far line for this entry.
+        dex_text_id = str(self._extract_text_for(lines, start_index + 3))
+
         return PokedexEntryData(
             species=species,
             height_feet=height_feet,
             height_inches=height_inches,
             weight=weight,
+            dex_text_id=dex_text_id,
         )
+
+    def _extract_text_for(self, lines: list[str], start_index: int) -> str | None:
+        """Extract the `text_far` symbol for one Pokédex entry.
+
+        Args:
+            lines (list[str]): The lines from the dex_entries.asm file.
+            start_index (int): The index to start scanning from.
+
+        Returns:
+            str | None: The symbol name from the `text_far` line, if present.
+
+        """
+        i = start_index
+        while i < len(lines):
+            line = lines[i].strip()
+
+            if line.startswith("text_far "):
+                return line[len("text_far ") :].split(";")[0].strip()
+            if line == "text_end" or line.endswith("DexEntry:"):
+                return None
+
+            i += 1
+        return None
 
     def _build_ordered_entries(
         self, pointers: list[str], entry_data: dict[str, PokedexEntryData]
