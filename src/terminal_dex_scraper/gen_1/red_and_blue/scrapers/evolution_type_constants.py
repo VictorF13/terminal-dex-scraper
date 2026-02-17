@@ -98,3 +98,21 @@ class EvolutionTypeConstants:
                 return constant_name
         message = f"No evolution type constant found for value: {value}"
         raise ValueError(message)
+
+    def serialize_records(self) -> list[dict[str, int | str]]:
+        """Build JSON-ready records for evolution type constants.
+
+        Returns:
+            list[dict[str, int | str]]: A list of records where each record contains
+                the constant index and name.
+
+        """
+        return [
+            {
+                "evolution_type_constant_id": constant_value,
+                "evolution_type_constant_name": constant_name,
+            }
+            for constant_name, constant_value in sorted(
+                self.constants.items(), key=lambda item: item[1]
+            )
+        ]
