@@ -52,3 +52,20 @@ class IconConstants:
                 filtered_data.append(line.split()[1])
 
         return filtered_data
+
+    def serialize_records(self) -> list[dict[str, int | str]]:
+        """Build JSON-ready records for icon constants.
+
+        Returns:
+            list[dict[str, int | str]]: A list of records where each record contains
+                the constant index and name.
+
+        """
+        return [
+            {
+                "icon_constant_id": constant_index,
+                "icon_constant_name": constant_name,
+            }
+            for constant_index, constant_name in enumerate(self.constants)
+            if constant_name is not None
+        ]
