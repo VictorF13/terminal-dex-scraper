@@ -77,3 +77,19 @@ class MoveConstants:
 
         """
         return self.constants.index(move_constant)
+
+    def serialize_records(self) -> list[dict[str, int | str]]:
+        """Build JSON-ready records for move constants.
+
+        Returns:
+            list[dict[str, int | str]]: A list of records where each record contains
+                the constant index and name.
+
+        """
+        return [
+            {
+                "move_constant_id": constant_index,
+                "move_constant_name": constant_name,
+            }
+            for constant_index, constant_name in enumerate(self.constants)
+        ]
