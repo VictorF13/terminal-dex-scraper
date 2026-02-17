@@ -64,3 +64,19 @@ class GrowthRateConstants:
 
         """
         return self.constants.index(growth_rate_constant)
+
+    def serialize_records(self) -> list[dict[str, int | str]]:
+        """Build JSON-ready records for growth rate constants.
+
+        Returns:
+            list[dict[str, int | str]]: A list of records where each record contains
+                the constant index and name.
+
+        """
+        return [
+            {
+                "growth_rate_constant_id": constant_index,
+                "growth_rate_constant_name": constant_name,
+            }
+            for constant_index, constant_name in enumerate(self.constants)
+        ]
