@@ -66,3 +66,20 @@ class PokedexConstants:
 
         """
         return self.constants.index(pokedex_constant)
+
+    def serialize_records(self) -> list[dict[str, int | str]]:
+        """Build JSON-ready records for Pokédex constants.
+
+        Returns:
+            list[dict[str, int | str]]: A list of records where each record contains
+                the constant index and name.
+
+        """
+        return [
+            {
+                "pokedex_constant_id": constant_index,
+                "pokedex_constant_name": constant_name,
+            }
+            for constant_index, constant_name in enumerate(self.constants)
+            if constant_name is not None
+        ]
