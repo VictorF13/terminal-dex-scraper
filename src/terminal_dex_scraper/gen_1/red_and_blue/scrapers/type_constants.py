@@ -76,3 +76,24 @@ class TypeConstants:
 
         """
         return self.constants.index(type_constant)
+
+    def serialize_records(self) -> list[dict[str, int | str]]:
+        """Build JSON-ready records for type constants.
+
+        Returns:
+            list[dict[str, int | str]]: A list of records where each record contains
+                the constant index, name, and category.
+
+        """
+        special_type_start = self.markers["SPECIAL"]
+        return [
+            {
+                "type_constant_id": constant_index,
+                "type_constant_name": constant_name,
+                "type_constant_category": (
+                    "PHYSICAL" if constant_index < special_type_start else "SPECIAL"
+                ),
+            }
+            for constant_index, constant_name in enumerate(self.constants)
+            if constant_name is not None
+        ]
