@@ -110,3 +110,36 @@ class PokemonConstants:
         # Resolve alias if the input is an alias
         constant = self.aliases.get(pokemon_constant, pokemon_constant)
         return self.constants.index(constant)
+
+    def serialize_records(self) -> list[dict[str, int | str]]:
+        """Build JSON-ready records for Pokémon constants.
+
+        Returns:
+            list[dict[str, int | str]]: A list of records where each record contains
+                the constant index and name.
+
+        """
+        return [
+            {
+                "pokemon_constant_id": constant_index,
+                "pokemon_constant_name": constant_name,
+            }
+            for constant_index, constant_name in enumerate(self.constants)
+            if constant_name is not None
+        ]
+
+    def serialize_alias_records(self) -> list[dict[str, int | str]]:
+        """Build JSON-ready records for Pokémon constant aliases.
+
+        Returns:
+            list[dict[str, int | str]]: A list of records where each record contains
+                the alias constant name and the referenced Pokémon constant ID.
+
+        """
+        return [
+            {
+                "pokemon_constant_alias_name": alias_name,
+                "pokemon_constant_id": self.get_pokemon_index(pokemon_constant_name),
+            }
+            for alias_name, pokemon_constant_name in self.aliases.items()
+        ]
