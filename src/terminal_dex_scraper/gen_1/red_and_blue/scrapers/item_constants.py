@@ -5,6 +5,9 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 from terminal_dex_scraper.config.settings import Settings
+from terminal_dex_scraper.gen_1.red_and_blue.scrapers.move_constants import (
+    MoveConstants,
+)
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -330,3 +333,76 @@ class ItemConstants:
         # Resolve alias if the input is an alias
         constant = self.aliases.get(item_constant, item_constant)
         return self.constants.index(constant)
+
+    def serialize_records(self) -> list[dict[str, int | str]]:
+        """Build JSON-ready records for item constants.
+
+        Returns:
+            list[dict[str, int | str]]: A list of records where each record contains
+                the constant index and name.
+
+        """
+        return [
+            {
+                "item_constant_id": constant_index,
+                "item_constant_name": constant_name,
+            }
+            for constant_index, constant_name in enumerate(self.constants)
+            if constant_name is not None
+        ]
+
+    def serialize_alias_records(self) -> list[dict[str, int | str]]:
+        """Build JSON-ready records for item constant aliases.
+
+        Returns:
+            list[dict[str, int | str]]: A list of records where each record contains
+                the alias constant name and the referenced item constant ID.
+
+        """
+        return [
+            {
+                "item_constant_alias_name": alias_name,
+                "item_constant_id": self.get_item_index(item_constant_name),
+            }
+            for alias_name, item_constant_name in self.aliases.items()
+        ]
+
+    def serialize_tmnum_records(self) -> list[dict[str, int | str | bool]]:
+        """Build JSON-ready records for TM/HM learnable flag constants.
+
+        Returns:
+            list[dict[str, int | str | bool]]: A list of records where each record
+                contains the TM/HM flag index, name, and whether it is the unused slot.
+
+        """
+        return [
+            {
+                "tmnum_constant_id": constant_index,
+                "tmnum_constant_name": constant_name,
+                "is_unused": constant_name == "UNUSED_TMNUM",
+            }
+            for constant_index, constant_name in enumerate(self.tmnum_constants)
+            if constant_name is not None
+        ]
+
+    def serialize_machine_map_records(self) -> list[dict[str, int]]:
+        """Build JSON-ready records for item-to-machine mapping.
+
+        Returns:
+            list[dict[str, int]]: A list of records where each record contains the item
+                constant ID and its related move constant ID.
+
+        """
+        move_constants = MoveConstants(self._settings)
+        return [
+            {
+                "item_constant_id": self.get_item_index(item_constant_name),
+                "move_constant_id": move_constants.get_move_index(
+                    self.machine_move_map[machine_move_name]
+                ),
+            }
+            for item_constant_name, machine_move_name in sorted(
+                self.machine_map.items(),
+                key=lambda item: self.get_item_index(item[0]),
+            )
+        ]
