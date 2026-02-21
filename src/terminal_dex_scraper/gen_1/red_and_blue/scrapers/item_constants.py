@@ -36,7 +36,7 @@ class _ItemConstantsParser:
         list[str | None],
         dict[str, str],
         dict[str, str],
-        list[str | None],
+        dict[int, str],
         dict[str, str],
         dict[str, int],
     ]:
@@ -262,12 +262,8 @@ class _ItemConstantsParser:
             previous = self.tmnum_by_value.setdefault(value, "UNUSED_TMNUM")
             _ = previous
 
-    def _build_tmnum_constants(self) -> list[str | None]:
-        max_index = max(self.tmnum_by_value) if self.tmnum_by_value else 0
-        tmnum_constants: list[str | None] = [None] * (max_index + 1)
-        for index, tmnum_name in sorted(self.tmnum_by_value.items()):
-            tmnum_constants[index] = tmnum_name
-        return tmnum_constants
+    def _build_tmnum_constants(self) -> dict[int, str]:
+        return dict(sorted(self.tmnum_by_value.items()))
 
 
 class ItemConstants:
@@ -276,7 +272,7 @@ class ItemConstants:
     constants: list[str | None]
     aliases: dict[str, str]
     machine_move_map: dict[str, str]
-    tmnum_constants: list[str | None]
+    tmnum_constants: dict[int, str]
     machine_map: dict[str, str]
     special_values: dict[str, int]
 
@@ -310,7 +306,7 @@ class ItemConstants:
         list[str | None],
         dict[str, str],
         dict[str, str],
-        list[str | None],
+        dict[int, str],
         dict[str, str],
         dict[str, int],
     ]:
@@ -334,12 +330,12 @@ class ItemConstants:
         constant = self.aliases.get(item_constant, item_constant)
         return self.constants.index(constant)
 
-    def serialize_records(self) -> list[dict[str, int | str]]:
+    def serialize_records(self) -> list[dict[str, int | str | None]]:
         """Build JSON-ready records for item constants.
 
         Returns:
-            list[dict[str, int | str]]: A list of records where each record contains
-                the constant index and name.
+            list[dict[str, int | str | None]]: A list of records where each record
+                contains the constant index and name.
 
         """
         return [
@@ -348,7 +344,6 @@ class ItemConstants:
                 "item_constant_name": constant_name,
             }
             for constant_index, constant_name in enumerate(self.constants)
-            if constant_name is not None
         ]
 
     def serialize_alias_records(self) -> list[dict[str, int | str]]:
@@ -377,12 +372,11 @@ class ItemConstants:
         """
         return [
             {
-                "tmnum_constant_id": constant_index,
+                "tmnum_constant_id": constant_id,
                 "tmnum_constant_name": constant_name,
                 "is_unused": constant_name == "UNUSED_TMNUM",
             }
-            for constant_index, constant_name in enumerate(self.tmnum_constants)
-            if constant_name is not None
+            for constant_id, constant_name in sorted(self.tmnum_constants.items())
         ]
 
     def serialize_machine_map_records(self) -> list[dict[str, int]]:
