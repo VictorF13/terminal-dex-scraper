@@ -48,7 +48,7 @@ class PokedexOrder:
                 MISSINGNO, followed by all entries from the file.
 
         """
-        pokedex_order: list[str] = ["0"]
+        pokedex_order: list[str] = []
 
         for text_line in self._pokedex_order_path.read_text().splitlines():
             line = text_line.strip()
