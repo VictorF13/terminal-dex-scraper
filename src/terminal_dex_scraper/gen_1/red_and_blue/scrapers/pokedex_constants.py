@@ -12,7 +12,7 @@ class PokedexConstants:
     """Model to store the Pokédex constants and related information.
 
     Attributes:
-        constants (list[str]): A list of constant names for all Pokédex constants.
+        constants (dict[int, str]): A mapping of Pokédex constant IDs to names.
         max_pokedex_index (int): The maximum Pokedéx index. This is also the number of
             Pokédex entries. This is set in the codebase, which is why it's set here.
 
@@ -37,25 +37,27 @@ class PokedexConstants:
             / "pokedex_constants.asm"
         )
 
-        self.constants: list[str | None] = self._scrape_pokedex_constants()
-        self.max_pokedex_index: int = len(self.constants) - 1
+        self.constants: dict[int, str] = self._scrape_pokedex_constants()
+        self.max_pokedex_index: int = max(self.constants) if self.constants else 0
 
-    def _scrape_pokedex_constants(self) -> list[str | None]:
+    def _scrape_pokedex_constants(self) -> dict[int, str]:
         """Scrape the constant names for all Pokédex constants in Red and Blue.
 
         Returns:
-            list[str | None]: A list of constant names for all Pokédex constants in Red
-                and Blue. None represents an index with no corresponding Pokédex entry.
+            dict[int, str]: A mapping of Pokédex constant IDs to names.
 
         """
-        pokedex_constants: list[str | None] = []
+        pokedex_constants: dict[int, str] = {}
+        next_constant_value = 0
         for text_line in self._pokedex_constants_path.read_text().splitlines():
             line = text_line.strip()
             if line.startswith("const_def"):
-                pokedex_constants.append(None)
+                parts = line.split()
+                next_constant_value = int(parts[1]) if len(parts) > 1 else 0
             elif line.startswith("const"):
                 parts = line.split()
-                pokedex_constants.append(parts[1])
+                pokedex_constants[next_constant_value] = parts[1]
+                next_constant_value += 1
         return pokedex_constants
 
     def get_pokedex_index(self, pokedex_constant: str) -> int:
@@ -65,7 +67,11 @@ class PokedexConstants:
             int: The index of the Pokédex constant.
 
         """
-        return self.constants.index(pokedex_constant)
+        for pokedex_index, constant_name in self.constants.items():
+            if constant_name == pokedex_constant:
+                return pokedex_index
+        message = f"No Pokédex constant found for name: {pokedex_constant}"
+        raise ValueError(message)
 
     def serialize_records(self) -> list[dict[str, int | str]]:
         """Build JSON-ready records for Pokédex constants.
@@ -80,6 +86,5 @@ class PokedexConstants:
                 "pokedex_constant_id": constant_index,
                 "pokedex_constant_name": constant_name,
             }
-            for constant_index, constant_name in enumerate(self.constants)
-            if constant_name is not None
+            for constant_index, constant_name in sorted(self.constants.items())
         ]
