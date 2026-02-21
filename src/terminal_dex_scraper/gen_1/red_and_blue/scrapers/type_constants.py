@@ -77,23 +77,52 @@ class TypeConstants:
         """
         return self.constants.index(type_constant)
 
-    def serialize_records(self) -> list[dict[str, int | str]]:
+    def serialize_records(self) -> list[dict[str, int | str | None]]:
         """Build JSON-ready records for type constants.
 
         Returns:
-            list[dict[str, int | str]]: A list of records where each record contains
-                the constant index, name, and category.
+            list[dict[str, int | str | None]]: A list of records where each record
+                contains the constant index, name, and category.
 
         """
+        unused_types_start = self.markers["UNUSED_TYPES"]
+        unused_types_end = self.markers["UNUSED_TYPES_END"]
         special_type_start = self.markers["SPECIAL"]
         return [
             {
                 "type_constant_id": constant_index,
                 "type_constant_name": constant_name,
-                "type_constant_category": (
-                    "PHYSICAL" if constant_index < special_type_start else "SPECIAL"
+                "type_constant_category": self._get_type_category(
+                    constant_index=constant_index,
+                    unused_types_start=unused_types_start,
+                    unused_types_end=unused_types_end,
+                    special_type_start=special_type_start,
                 ),
             }
             for constant_index, constant_name in enumerate(self.constants)
-            if constant_name is not None
         ]
+
+    def _get_type_category(
+        self,
+        constant_index: int,
+        unused_types_start: int,
+        unused_types_end: int,
+        special_type_start: int,
+    ) -> str:
+        """Get the category for a type constant index.
+
+        Args:
+            constant_index (int): The type constant index.
+            unused_types_start (int): The start index of unused types.
+            unused_types_end (int): The end index boundary of unused types.
+            special_type_start (int): The start index of special types.
+
+        Returns:
+            str: The category for the given type constant index.
+
+        """
+        if unused_types_start <= constant_index < unused_types_end:
+            return "UNUSED"
+        if constant_index < special_type_start:
+            return "PHYSICAL"
+        return "SPECIAL"
