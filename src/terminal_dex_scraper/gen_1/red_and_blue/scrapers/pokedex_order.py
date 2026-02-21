@@ -3,6 +3,9 @@
 from typing import TYPE_CHECKING
 
 from terminal_dex_scraper.config.settings import Settings
+from terminal_dex_scraper.gen_1.red_and_blue.scrapers.pokedex_constants import (
+    PokedexConstants,
+)
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -37,6 +40,7 @@ class PokedexOrder:
             / "pokemon"
             / "dex_order.asm"
         )
+        self._pokedex_constants: PokedexConstants = PokedexConstants(self._settings)
 
         self.order: list[str] = self._scrape_pokedex_order()
 
@@ -58,3 +62,27 @@ class PokedexOrder:
                 pokedex_order.append(value)
 
         return pokedex_order
+
+    def serialize_records(self) -> list[dict[str, int]]:
+        """Build JSON-ready records for the internal Pokédex order mapping.
+
+        Returns:
+            list[dict[str, int]]: A list of records mapping each internal Pokémon ID to
+                its corresponding Pokédex constant ID.
+
+        """
+        return [
+            {
+                "pokemon_constant_id": pokemon_constant_id,
+                "pokedex_constant_id": (
+                    0
+                    if pokedex_constant_name == "0"
+                    else self._pokedex_constants.get_pokedex_index(
+                        pokedex_constant_name
+                    )
+                ),
+            }
+            for pokemon_constant_id, pokedex_constant_name in enumerate(
+                self.order, start=1
+            )
+        ]
