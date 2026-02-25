@@ -95,4 +95,4 @@ Use Conventional Commits without parentheses:
 
 - Do not call `pip`, `python`, `ruff`, or `ty` directly. Always go through `uv` and `prek`.
 - Keep diffs minimal and consistent with existing style.
-- If in doubt, run `prek run --all-files` to validate.
+- If in doubt, run `uv run prek run --all-files` to validate.
