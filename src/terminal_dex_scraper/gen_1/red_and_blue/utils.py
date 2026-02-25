@@ -1,11 +1,13 @@
 """Utility functions for Pokémon Red and Blue."""
 
+import logging
 from pathlib import Path
 
-from click import secho
 from git import Repo
 
 from terminal_dex_scraper.config.settings import Settings
+
+logger = logging.getLogger(__name__)
 
 
 def clone_red_and_blue_codebase(settings: Settings | None = None) -> None:
@@ -24,34 +26,23 @@ def clone_red_and_blue_codebase(settings: Settings | None = None) -> None:
         settings = Settings()
 
     # Cloning repository if not already cloned
-    secho(
-        "Checking if Pokémon Red and Blue disassembly is already cloned...", fg="yellow"
-    )
+    logger.info("Checking if Pokémon Red and Blue disassembly is already cloned...")
     if not settings.pokemon_red_and_blue_disassembly_path.exists():
-        secho(
-            (
-                "Pokémon Red and Blue disassembly not found, cloning from "
-                f"`{settings.pokemon_red_and_blue_disassembly_repo}` to "
-                f"`{settings.pokemon_red_and_blue_disassembly_path}`..."
-            ),
-            fg="yellow",
+        logger.info(
+            "Pokémon Red and Blue disassembly not found, cloning from `%s` to `%s`...",
+            settings.pokemon_red_and_blue_disassembly_repo,
+            settings.pokemon_red_and_blue_disassembly_path,
         )
         _ = Repo.clone_from(
             Settings().pokemon_red_and_blue_disassembly_repo,
             settings.pokemon_red_and_blue_disassembly_path,
         )
-        secho(
-            (
-                "Pokémon Red and Blue disassembly cloned to "
-                f"`{settings.pokemon_red_and_blue_disassembly_path}`."
-            ),
-            fg="green",
+        logger.info(
+            "Pokémon Red and Blue disassembly cloned to `%s`.",
+            settings.pokemon_red_and_blue_disassembly_path,
         )
     else:
-        secho(
-            "Pokémon Red and Blue disassembly found, using existing clone...",
-            fg="yellow",
-        )
+        logger.info("Pokémon Red and Blue disassembly found, using existing clone...")
 
 
 def fix_mew_code_entries(settings: Settings | None = None) -> None:
@@ -70,7 +61,7 @@ def fix_mew_code_entries(settings: Settings | None = None) -> None:
 
     repo_path = settings.pokemon_red_and_blue_disassembly_path
 
-    secho("Applying local fixes for Mew entries...", fg="yellow")
+    logger.info("Applying local fixes for Mew entries...")
 
     base_stats_path = repo_path / "data" / "pokemon" / "base_stats.asm"
     main_path = repo_path / "main.asm"
@@ -83,7 +74,7 @@ def fix_mew_code_entries(settings: Settings | None = None) -> None:
     _remove_mew_get_mon_header_branch(home_pokemon_path)
     _ensure_mew_pictures_present(pics_path)
 
-    secho("Finished applying Mew fixes.", fg="green")
+    logger.info("Finished applying Mew fixes.")
 
 
 # Helpers
